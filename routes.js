@@ -3,12 +3,13 @@ var passport = require("passport");
 var User = require("./models/user");
 var Project = require("./models/project");
 var multer = require('multer');
+var crypto = require('crypto');
+var path = require('path');
 
 var router = express.Router();
 
-
 /**
- * Mutler Configurations
+ * Multer Configurations
  */
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -130,8 +131,9 @@ router.post("/add_project", upload.single('image'), ensureAuthenticated, functio
     var title = req.body.title;
     var description = req.body.description;
     var repository = req.body.repository;
+    console.log(req.file);
     var file = req.file;
-    if (repository == undefined && file == undefined) {
+    if (req.body.repository == "" && req.file == undefined) {
         req.flash("error", "Please enter a link to the repository or a screenshot of your work.");
         return res.redirect("/add_project");
     }
@@ -151,16 +153,16 @@ router.post("/add_project", upload.single('image'), ensureAuthenticated, functio
         newproject.image = file.filename;
     }
 
-    newproject.save(next);
-    req.user.projects.push(newproject);
-    req.user.save(function(err) {
-        if (err) {
-            next(err);
-            return;
-        }
-        req.flash("info", "Project added successfully!");
-        console.log("step 4");
-        // res.redirect("/portfolio" + req.user.username);
+    newproject.save((err) => {
+        req.user.projects.push(newproject);
+        req.user.save(function(err) {
+            if (err) {
+                next(err);
+                return;
+            }
+            req.flash("info", "Project added successfully!");
+            return res.redirect("/portfolio/" + req.user.username);
+        });
     });
 });
 
@@ -177,5 +179,7 @@ router.post("/edit", ensureAuthenticated, function(req, res, next) {
         res.redirect("/edit");
     });
 });
+
+
 
 module.exports = router;

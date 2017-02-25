@@ -10,7 +10,7 @@
 <% } %>
 
 <% if ((currentUser) && (currentUser.id === user.id)){
-  if ( user.projects.length == 0) { %>
+  if ( user.projects.length != 0) { %>
   <form action="/add_project" method="get">
   
   <input type="submit" value="Add Project" class="btn btn-primary btn-block">
