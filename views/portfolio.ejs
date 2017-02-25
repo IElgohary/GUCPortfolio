@@ -3,16 +3,21 @@
   <a href="/edit" class="pull-right">Edit your profile</a>
 <% } %>
 <h1><%= user.name() %></h1>
+<p><%= user.email %></p>
 <h2>Joined on <%= user.createdAt %></h2>
 <% if (user.bio) { %>
   <p><%= user.bio %></p>
 <% } %>
-<% if ( user.portfolio) { %>
-  <p><%= user.portfolio %></p>
-<% } else if ((currentUser) && (currentUser.id === user.id)) {%>
 
-  <form action="/createPortfolio" method="post">
-  <input type="submit" value="Create Portfolio" class="btn btn-primary btn-block"
-   placeholder="You Don't have a Portfolio yet.">
-<% } %>
+<% if ((currentUser) && (currentUser.id === user.id)){
+  if ( user.projects.length == 0) { %>
+  <form action="/add_project" method="get">
+  
+  <input type="submit" value="Add Project" class="btn btn-primary btn-block">
+<% } else  {%>
+
+  <form action="/add_project" method="get">
+  
+  <input type="submit" value="Create Portfolio" class="btn btn-primary btn-block">
+<% } }%>
 <% include _footer %>

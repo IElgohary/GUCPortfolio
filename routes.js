@@ -1,11 +1,33 @@
 var express = require("express");
 var passport = require("passport");
 var User = require("./models/user");
+var Project = require("./models/project");
+var multer = require('multer');
 
 var router = express.Router();
 
-// helper functions
 
+/**
+ * Mutler Configurations
+ */
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, './public/uploads/');
+    },
+    filename: function(req, file, cb) {
+        const buf = crypto.randomBytes(48);
+        cb(null, Date.now() + buf.toString('hex') + path.extname(file.originalname));
+    }
+});
+
+
+const upload = multer({
+    storage: storage
+});
+
+/**
+ * Authentication function
+ */
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         next();
@@ -16,7 +38,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 
-// USE
+// Set Variables
 router.use(function(req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.errors = req.flash("error");
@@ -60,6 +82,10 @@ router.get("/portfolio/:username", function(req, res, next) {
     });
 });
 
+router.get("/add_project", ensureAuthenticated, function(req, res) {
+    res.render("add_project");
+});
+
 // POST
 router.post("/signup", function(req, res, next) {
     var username = req.body.username;
@@ -99,15 +125,42 @@ router.post("/login", passport.authenticate("login", {
     failureFlash: true
 }));
 
-router.post("/createPortfolio", ensureAuthenticated, function(req, res, next) {
-    req.user.createPortfolio();
+router.post("/add_project", upload.single('image'), ensureAuthenticated, function(req, res, next) {
+
+    var title = req.body.title;
+    var description = req.body.description;
+    var repository = req.body.repository;
+    var file = req.file;
+    if (repository == undefined && file == undefined) {
+        req.flash("error", "Please enter a link to the repository or a screenshot of your work.");
+        return res.redirect("/add_project");
+    }
+
+    var newproject = new Project({
+        _creator: req.user._id,
+        title,
+        description,
+        averageRating: 0
+    });
+
+    if (repository) {
+        newproject.repository = repository;
+    }
+
+    if (file) {
+        newproject.image = file.filename;
+    }
+
+    newproject.save(next);
+    req.user.projects.push(newproject);
     req.user.save(function(err) {
         if (err) {
             next(err);
             return;
         }
-        req.flash("info", "Profile updated!");
-        res.redirect("/portfolio/ <%currentUser.username %>");
+        req.flash("info", "Project added successfully!");
+        console.log("step 4");
+        // res.redirect("/portfolio" + req.user.username);
     });
 });
 

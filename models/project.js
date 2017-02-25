@@ -2,14 +2,15 @@ require('./user')
 
 var mongoose = require("mongoose");
 var bcrypt = require("bcrypt-nodejs");
-var SALT_FACTOR = 10;
+
 
 var projectSchema = mongoose.Schema({
-    _creator: { type: Number, ref: 'user' },
+    _creator: { type: String, ref: 'User' },
     title: String,
     description: String,
-    photo: String,
-    link: String
+    image: String,
+    repository: String,
+    averageRating: Number
 });
 
 var Project = mongoose.model("Project", projectSchema);

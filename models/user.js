@@ -5,14 +5,6 @@ var bcrypt = require("bcrypt-nodejs");
 
 var SALT_FACTOR = 10;
 
-
-var portfolioSchema = new mongoose.Schema({
-    projects: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project'
-    }]
-});
-
 var userSchema = mongoose.Schema({
     username: {
         type: String,
@@ -28,21 +20,14 @@ var userSchema = mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     displayName: String,
     bio: String,
-    portfolio: portfolioSchema
+    projects: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project'
+    }]
 });
 
 userSchema.methods.name = function() {
     return this.displayName || this.username;
-};
-
-userSchema.methods.createPortfolio = function() {
-    this.portfolio = new portfolioSchema({
-        projects: []
-    });
-}
-
-userSchema.methods.getPortfolio = function() {
-    return this.portfolio || null;
 };
 
 userSchema.methods.checkPassword = function(guess, done) {
