@@ -50,7 +50,8 @@ router.use(function(req, res, next) {
 
 // GET
 router.get("/", function(req, res, next) {
-    User.find()
+
+    User.find().populate('projects')
         .sort({ createdAt: "descending" })
         .exec(function(err, users) {
             if (err) { return next(err); }
@@ -60,6 +61,10 @@ router.get("/", function(req, res, next) {
 
 router.get("/signup", function(req, res) {
     res.render("signup");
+});
+
+router.get("/cover", ensureAuthenticated, function(req, res) {
+    res.render("cover", { user: req.user });
 });
 
 router.get("/login", function(req, res) {
@@ -76,12 +81,19 @@ router.get("/edit", ensureAuthenticated, function(req, res) {
 });
 
 router.get("/portfolio/:username", function(req, res, next) {
-    User.findOne({ username: req.params.username }, function(err, user) {
-        if (err) { return next(err); }
+    User.findOne({ username: req.params.username }).populate('projects').
+    exec((err, user) => {
+        if (err) {
+            next(err);
+            return;
+        }
         if (!user) { return next(404); }
         res.render("portfolio", { user: user });
-    });
+        console.log("projects", req.params.projects);
+    })
+
 });
+
 
 router.get("/add_project", ensureAuthenticated, function(req, res) {
     res.render("add_project");
@@ -128,11 +140,12 @@ router.post("/login", passport.authenticate("login", {
 
 router.post("/add_project", upload.single('image'), ensureAuthenticated, function(req, res, next) {
 
+    var studentname = req.body.studentname;
     var title = req.body.title;
     var description = req.body.description;
     var repository = req.body.repository;
-    console.log(req.file);
     var file = req.file;
+
     if (req.body.repository == "" && req.file == undefined) {
         req.flash("error", "Please enter a link to the repository or a screenshot of your work.");
         return res.redirect("/add_project");
@@ -153,8 +166,10 @@ router.post("/add_project", upload.single('image'), ensureAuthenticated, functio
         newproject.image = file.filename;
     }
 
+
     newproject.save((err) => {
         req.user.projects.push(newproject);
+        req.user.studentName = studentname;
         req.user.save(function(err) {
             if (err) {
                 next(err);
@@ -167,9 +182,9 @@ router.post("/add_project", upload.single('image'), ensureAuthenticated, functio
 });
 
 router.post("/edit", ensureAuthenticated, function(req, res, next) {
-    req.user.displayName = req.body.displayname;
+    req.user.studentName = req.body.studentname;
     req.user.email = req.body.email;
-    req.user.bio = req.body.bio;
+    req.user.description = req.body.description;
     req.user.save(function(err) {
         if (err) {
             next(err);
@@ -180,6 +195,17 @@ router.post("/edit", ensureAuthenticated, function(req, res, next) {
     });
 });
 
-
+router.post("/cover", upload.single('cover'), ensureAuthenticated, function(req, res, next) {
+    var file = req.file;
+    req.user.cover = file.filename;
+    req.user.save(function(err) {
+        if (err) {
+            next(err);
+            return;
+        }
+        req.flash("info", "Portfolio Cover updated!");
+        res.redirect("/portfolio/" + req.user.username);
+    });
+});
 
 module.exports = router;

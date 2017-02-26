@@ -14,6 +14,7 @@ var app = express();
 
 var logger = require("morgan");
 app.use(logger("dev"));
+app.use(express.static("public"));
 
 mongoose.connect("mongodb://localhost:27017/portfolio");
 setUpPassport();

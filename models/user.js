@@ -17,9 +17,10 @@ var userSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    cover: String,
     createdAt: { type: Date, default: Date.now },
-    displayName: String,
-    bio: String,
+    studentName: String,
+    description: String,
     projects: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project'
@@ -27,7 +28,7 @@ var userSchema = mongoose.Schema({
 });
 
 userSchema.methods.name = function() {
-    return this.displayName || this.username;
+    return this.studentName || this.username;
 };
 
 userSchema.methods.checkPassword = function(guess, done) {

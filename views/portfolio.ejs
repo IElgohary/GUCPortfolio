@@ -1,16 +1,41 @@
+
 <% include _header %>
 <% if ((currentUser) && (currentUser.id === user.id)) { %>
-  <a href="/edit" class="pull-right">Edit your profile</a>
+  <a href="/edit" class="pull-right">Edit your profile  </a></br>
+  <a href="/cover" class="pull-right">Change Portfolio Cover</a>
 <% } %>
 <h1><%= user.name() %></h1>
 <p><%= user.email %></p>
 <h2>Joined on <%= user.createdAt %></h2>
-<% if (user.bio) { %>
-  <p><%= user.bio %></p>
+<% if (user.description) { %>
+  <p><%= user.description %></p>
 <% } %>
-
-<% if ((currentUser) && (currentUser.id === user.id)){
-  if ( user.projects.length != 0) { %>
+<% if (user.cover) { %>
+<img src="/uploads/<%= user.cover %>" width="500" height = "250" /></br></br>
+<% } %>
+  <% if ( user.projects.length != 0) { %>
+  <% for (var i = 0 ; i < user.projects.length ; i++){ %> 
+      <div class="panel panel-default">
+        <div class="panel-heading">
+            <%= user.projects[i].title %>
+        </div>
+        <% if (user.projects[i].description) { %>
+          <div class="panel-body"><%= user.projects[i].description %><br/>
+        <% } %>
+        <% if (user.projects[i].repository) { %>
+          <a href="/portfolio/<%= user.projects[i].repository %>">
+          <%= user.projects[i].repository %></a>
+        <% } %>
+        <% if (user.projects[i].image) { %>
+          <img src="/uploads/<%= user.projects[i].image %>" width = "1024" height="725"/>
+        <% } %>
+        </div>
+      </div>
+  <% } %>
+<% } %>
+ 
+<% if ((currentUser) && (currentUser.id === user.id)){ %>
+<% if ( user.projects.length != 0) { %>
   <form action="/add_project" method="get">
   
   <input type="submit" value="Add Project" class="btn btn-primary btn-block">

@@ -3,12 +3,37 @@
 
 <% users.forEach(function(user) { %>
   <div class="panel panel-default">
-    <div class="panel-heading">
+  <div class="panel-heading">
       <a href="/portfolio/<%= user.username %>">
         <%= user.name() %>
-</a> </div>
-    <% if (user.bio) { %>
-      <div class="panel-body"><%= user.bio %></div>
-<% } %> </div>
+      </a> 
+    </div>
+  <table>
+  <tr>
+  <div class="panel-body">
+  
+      
+      <% if (user.cover) { %>
+          <img src="/uploads/<%= user.cover %>" width = "300"  height="150"/>  </br>
+      <% } %> 
+   </tr><tr>
+      <% if (user.description) { %>
+        <%= user.description %> 
+      <% } %>
+  
+       </div>
+  </tr>
+  <tr>
+    <a href="/portfolio/<%= user.username %>">
+        <%= user.projects[0].title %>
+    </a> 
+  </tr>
+  <tr>
+    <a href="/portfolio/<%= user.username %>">
+        <%= user.projects[1].title %>
+    </a> 
+  </tr>
+  </table>
+  </div>
 <% }) %>
 <% include _footer %>

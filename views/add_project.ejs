@@ -1,6 +1,10 @@
 <% include _header %>
 <h1>Add Project</h1>
 <form action="/add_project" enctype="multipart/form-data" method="post">
+<% if(currentUser.projects.length == 0) { %>
+<input name="studentname" type="text" class="form-control" placeholder="Student name"
+ value="<%= currentUser.studentName || "" %>" required> 
+<% } %>
   <input name="title" type="text" class="form-control"
      placeholder="Title" required autofocus>
   <input name="description" type="text" class="form-control"
@@ -9,6 +13,11 @@
      placeholder="Repository" >
   <input name="image" type="file" class="form-control"
   placeholder="Screenshot">
-  <input type="submit" value="Add" class="btn btn-primary btn-block">
+  <% if(currentUser.projects.length == 0) { %>
+    <input type="submit" value="Create Portfolio" class="btn btn-primary btn-block">
+  <% } else {%>
+    <input type="submit" value="Add" class="btn btn-primary btn-block">
+  <% } %>
+  
 </form>
 <% include _footer %>
