@@ -2,7 +2,9 @@
 <% include _header %>
 <% if ((currentUser) && (currentUser.id === user.id)) { %>
   <a href="/edit" class="pull-right">Edit your profile  </a></br>
-  <a href="/cover" class="pull-right">Change Portfolio Cover</a>
+  <% if(currentUser.projects.length > 0 ) {%>
+    <a href="/cover" class="pull-right">Change Portfolio Cover</a>
+  <% } %>
 <% } %>
 <h1><%= user.name() %></h1>
 <p><%= user.email %></p>
@@ -33,16 +35,25 @@
       </div>
   <% } %>
 <% } %>
- 
+ <ul class="pagination">
+<% for(var i = 0 ; i < pages; i++) {%>
+  <% if(i == page) { %>
+    <li class="active"><a ><%= i %></a></li>
+  <%}else{%>
+    <li><a href="/portfolio/<%=user.username%>/<%= i %>"><%= i %></a></li>
+  <%}%>
+<% } %>
+</ul>
 <% if ((currentUser) && (currentUser.id === user.id)){ %>
 <% if ( user.projects.length != 0) { %>
   <form action="/add_project" method="get">
   
-  <input type="submit" value="Add Project" class="btn btn-primary btn-block">
+  <input type="submit" value="Add Project" class="btn btn-primary">
 <% } else  {%>
 
   <form action="/add_project" method="get">
   
-  <input type="submit" value="Create Portfolio" class="btn btn-primary btn-block">
+  <input type="submit" value="Create Portfolio" class="btn btn-primary">
 <% } }%>
+
 <% include _footer %>

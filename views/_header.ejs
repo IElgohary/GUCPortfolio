@@ -16,18 +16,12 @@
     <ul class="nav navbar-nav navbar-right">
         <% if (currentUser) { %>
             <li>
-            <a href="/edit">
+            <a href="/portfolio/<%= currentUser.username %>">
                 Hello, <%= currentUser.name() %>
             </a>
             </li>
-                
-            <li>
-            <a href="/portfolio/<%= currentUser.username %>" >
-                  View Portfolio
-              </a>
-            </li>
-               
-                </li>
+            
+            
             <li><a href="/logout">Log out</a></li>
         <% } else { %>
             <li><a href="/login">Log in</a></li>

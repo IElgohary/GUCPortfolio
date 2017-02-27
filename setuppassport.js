@@ -15,7 +15,7 @@ module.exports = function() {
 };
 
 passport.use("login", new LocalStrategy(function(username, password, done) {
-    User.findOne({ username: username }, function(err, user) {
+    User.findOne({ username: username.toLowerCase() }, function(err, user) {
         if (err) { return done(err); }
         if (!user) {
             return done(null, false, { message: "No user has that username!" });
@@ -28,5 +28,7 @@ passport.use("login", new LocalStrategy(function(username, password, done) {
                 return done(null, false, { message: "Invalid password." });
             }
         });
+
+
     });
 }));

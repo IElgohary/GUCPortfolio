@@ -1,39 +1,52 @@
 <% include _header %>
 <h1>Welcome to GUC Portfolio!</h1>
-
+<% if(users == 0){ %>
+<h1>No Portfolios Available</h1>
+<% }%>
 <% users.forEach(function(user) { %>
   <div class="panel panel-default">
-  <div class="panel-heading">
-      <a href="/portfolio/<%= user.username %>">
-        <%= user.name() %>
-      </a> 
+    <div class="panel-heading">
+        <a href="/portfolio/<%= user.username %>">
+          <%= user.name() %>
+        </a> 
     </div>
-  <table>
-  <tr>
-  <div class="panel-body">
-  
-      
-      <% if (user.cover) { %>
-          <img src="/uploads/<%= user.cover %>" width = "300"  height="150"/>  </br>
-      <% } %> 
-   </tr><tr>
-      <% if (user.description) { %>
-        <%= user.description %> 
-      <% } %>
-  
-       </div>
-  </tr>
-  <tr>
-    <a href="/portfolio/<%= user.username %>">
-        <%= user.projects[0].title %>
-    </a> 
-  </tr>
-  <tr>
-    <a href="/portfolio/<%= user.username %>">
-        <%= user.projects[1].title %>
-    </a> 
-  </tr>
-  </table>
+    <div class="panel-body">
+      <table>
+        <tr> 
+            <% if (user.cover) { %>
+                <img src="/uploads/<%= user.cover %>" width = "300"  height="150"/>  </br>
+            <% } %> 
+        </tr>
+        <tr>
+            <% if (user.description) { %>
+            <h3>Description:</h3>
+              <%= user.description %> </br>
+            <% } %>
+        
+        </tr>
+        <% if(user.projects[0] != undefined){ %>
+        <h3>Top Projects:</h3>
+        <tr>
+          1.<%= user.projects[0].title %></br>
+        </tr>
+        <% } %>
+        <% if(user.projects[1] != undefined){ %>
+        <tr>
+          2.<%= user.projects[1].title %></br>
+        </tr>
+        <% } %>
+        
+      </table>
+    </div>
   </div>
 <% }) %>
+<ul class="pagination">
+<% for(var i = 0 ; i < pages; i++) {%>
+  <% if(i == page) { %>
+    <li class="active"><a ><%= i %></a></li>
+  <%}else{%>
+    <li><a href="/page/<%= i %>"><%= i %></a></li>
+  <%}%>
+<% } %>
+</ul>
 <% include _footer %>

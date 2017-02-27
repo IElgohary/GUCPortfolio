@@ -1,12 +1,16 @@
 <% include _header %>
+<% if(currentUser.projects.length == 0) { %>
+<h1>Create Portfolio</h1>
+<% } else {%>
 <h1>Add Project</h1>
+<% } %>
 <form action="/add_project" enctype="multipart/form-data" method="post">
 <% if(currentUser.projects.length == 0) { %>
 <input name="studentname" type="text" class="form-control" placeholder="Student name"
  value="<%= currentUser.studentName || "" %>" required> 
 <% } %>
   <input name="title" type="text" class="form-control"
-     placeholder="Title" required autofocus>
+     placeholder="Project title" required autofocus>
   <input name="description" type="text" class="form-control"
      placeholder="Description" required>
   <input name="repository" type="link" class="form-control"
@@ -14,9 +18,9 @@
   <input name="image" type="file" class="form-control"
   placeholder="Screenshot">
   <% if(currentUser.projects.length == 0) { %>
-    <input type="submit" value="Create Portfolio" class="btn btn-primary btn-block">
+    <input type="submit" value="Create Portfolio" class="btn btn-primary">
   <% } else {%>
-    <input type="submit" value="Add" class="btn btn-primary btn-block">
+    <input type="submit" value="Add" class="btn btn-primary">
   <% } %>
   
 </form>

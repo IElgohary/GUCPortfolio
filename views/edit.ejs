@@ -3,8 +3,14 @@
 <form action="/edit" method="post">
  <input name="email" type="text" class="form-control" placeholder="Email"
  value="<%= currentUser.email %>">
- <textarea name="description" class="form-control" placeholder="Tell us about yourself!">
+ <% if (user.projects.length > 0) { %>
+ <input name="studentname" type="text" class="form-control" placeholder="Student name"
+ value="<%= currentUser.studentName || "" %>" required> 
+ <textarea name="description" class="form-control" placeholder="Portfolio Description">
 <%= currentUser.description || "" %></textarea>
-<input type="submit" value="Update" class="btn btn-primary btn-block">
+<% } else {%>
+    <a href="/add_project" class="btn btn-primary">Create Portfolio</a>
+<% } %>
+<input type="submit" value="Update Info" class="btn btn-primary ">
 </form>
 <% include _footer %>

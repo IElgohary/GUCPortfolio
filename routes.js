@@ -5,6 +5,7 @@ var Project = require("./models/project");
 var multer = require('multer');
 var crypto = require('crypto');
 var path = require('path');
+var validUrl = require('valid-url');
 
 var router = express.Router();
 
@@ -49,13 +50,26 @@ router.use(function(req, res, next) {
 
 
 // GET
-router.get("/", function(req, res, next) {
+router.get("/", function(resa, res, next) {
+    res.redirect("/page/0");
+});
 
-    User.find().populate('projects')
+router.get("/page/:page", function(req, res, next) {
+    var page = req.params.page;
+    User.find().populate({ path: 'projects', options: { sort: { 'averageRating': -1 } } })
+        .limit(10)
+        .skip(10 * page)
         .sort({ createdAt: "descending" })
         .exec(function(err, users) {
-            if (err) { return next(err); }
-            res.render("index", { users: users });
+            User.count().exec(function(err, count) {
+                if (err) { return next(err); }
+                res.render('index', {
+                    users: users,
+                    page: page,
+                    pages: Math.ceil(count / 10)
+                });
+
+            });
         });
 });
 
@@ -77,20 +91,42 @@ router.get("/logout", function(req, res) {
 });
 
 router.get("/edit", ensureAuthenticated, function(req, res) {
-    res.render("edit");
+    res.render("edit", { user: req.user });
 });
 
 router.get("/portfolio/:username", function(req, res, next) {
-    User.findOne({ username: req.params.username }).populate('projects').
-    exec((err, user) => {
-        if (err) {
-            next(err);
-            return;
-        }
+    var username = req.params.username;
+    res.redirect("/portfolio/" + username + "/0");
+});
+
+router.get("/portfolio/:username/:page", function(req, res, next) {
+    var page = req.params.page;
+    var count;
+    User.findOne({ username: req.params.username }).exec((err, user) => {
+        if (err) { next(err) }
         if (!user) { return next(404); }
-        res.render("portfolio", { user: user });
-        console.log("projects", req.params.projects);
-    })
+        count = user.projects.length;
+    });
+    User
+        .findOne({ username: req.params.username })
+        .populate({
+            path: 'projects',
+            options: { sort: { 'averageRating': -1 }, limit: '5', skip: 5 * page }
+        })
+        .exec((err, user) => {
+
+            if (err) {
+                next(err);
+                return;
+            }
+            if (!user) { return next(404); }
+            res.render('portfolio', {
+                user: user,
+                page: page,
+                pages: Math.ceil(count / 5)
+            });
+
+        });
 
 });
 
@@ -104,7 +140,17 @@ router.post("/signup", function(req, res, next) {
     var username = req.body.username;
     var password = req.body.password;
     var email = req.body.email;
+    var nameRegex = /^[a-zA-Z0-9\-\_]+$/;
+    var passwordRegex = /(?=.*[!@#\$%\^&\*\-\_])(?=.*[0-9])(?=.{8,})/;
 
+    if (!username.match(nameRegex)) {
+        req.flash("error", "Username must contain only letters, numbers, underscores or dashes.");
+        return res.redirect("/signup");
+    }
+    if (!password.match(passwordRegex)) {
+        req.flash("error", "Password must be of length 8 or more, contain atleast one special character and one digit.");
+        return res.redirect("/signup");
+    }
     User.findOne({ username: username.toLowerCase() }, function(err, user) {
         if (err) { return next(err); }
         if (user) {
@@ -146,7 +192,7 @@ router.post("/add_project", upload.single('image'), ensureAuthenticated, functio
     var repository = req.body.repository;
     var file = req.file;
 
-    if (req.body.repository == "" && req.file == undefined) {
+    if ((req.body.repository == "" || !validUrl.isUri(req.body.repository)) && req.file == undefined) {
         req.flash("error", "Please enter a link to the repository or a screenshot of your work.");
         return res.redirect("/add_project");
     }
@@ -175,8 +221,10 @@ router.post("/add_project", upload.single('image'), ensureAuthenticated, functio
                 next(err);
                 return;
             }
+            if (req.user.projects.length == 1)
+                req.flash("info", "Your portfolio was successfully created!");
             req.flash("info", "Project added successfully!");
-            return res.redirect("/portfolio/" + req.user.username);
+            return res.redirect("/add_project");
         });
     });
 });
@@ -204,7 +252,7 @@ router.post("/cover", upload.single('cover'), ensureAuthenticated, function(req,
             return;
         }
         req.flash("info", "Portfolio Cover updated!");
-        res.redirect("/portfolio/" + req.user.username);
+        res.redirect("/cover");
     });
 });
 
