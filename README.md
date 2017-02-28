@@ -9,4 +9,5 @@ Each student will be able to register to this website and create a portfolio. A 
 
 # Setup
 1. Clone this repo.
+2. run ```npm install``` to install modules
 2. run ```npm start```

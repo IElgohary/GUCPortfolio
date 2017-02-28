@@ -94,6 +94,25 @@ router.get("/edit", ensureAuthenticated, function(req, res) {
     res.render("edit", { user: req.user });
 });
 
+// router.get("/editProject/:project", ensureAuthenticated, function(req, res) {
+//     var currUser = req.user.username;
+//     var id = req.params.project;
+//     Project
+//         .findOne({ _id: id })
+//         .populate('_creator')
+//         .exec((err, project) => {
+//             if (err) {
+//                 next(err);
+//                 return;
+//             }
+//             var user = project._creator.username;
+//             if (user == currUser) {
+//                 res.render("editProject", { project: project });
+//             }
+//             return next(403);
+//         });
+// });
+
 router.get("/portfolio/:username", function(req, res, next) {
     var username = req.params.username;
     res.redirect("/portfolio/" + username + "/0");
@@ -133,6 +152,29 @@ router.get("/portfolio/:username/:page", function(req, res, next) {
 
 router.get("/add_project", ensureAuthenticated, function(req, res) {
     res.render("add_project");
+});
+
+router.get("/delete/:project", ensureAuthenticated, function(req, res, next) {
+    var currUser = req.user.username;
+    var id = req.params.project;
+    Project
+        .findOne({ _id: id })
+        .populate('_creator')
+        .exec((err, project) => {
+            if (err) {
+                next(err);
+                return;
+            }
+            var user = project._creator.username;
+            if (user == currUser) {
+                res.render("confirmDelete", { project: project });
+            }
+            return next(403);
+        });
+});
+
+router.get("/delete", function(req, res) {
+    res.render("deleted");
 });
 
 // POST
@@ -253,6 +295,21 @@ router.post("/cover", upload.single('cover'), ensureAuthenticated, function(req,
         }
         req.flash("info", "Portfolio Cover updated!");
         res.redirect("/cover");
+    });
+});
+
+router.post("/delete", ensureAuthenticated, function(req, res, next) {
+    var id = req.body.id;
+    Project.find({ _id: id }).remove().exec((err) => {
+        if (err) {
+            next(err);
+            return;
+        }
+        var projects = req.user.projects;
+        projects.remove(id);
+        req.user.save();
+        req.flash("info", "Project deleted successfully!");
+        res.redirect("/delete");
     });
 });
 

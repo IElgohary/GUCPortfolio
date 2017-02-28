@@ -20,6 +20,9 @@
       <div class="panel panel-default">
         <div class="panel-heading">
             <%= user.projects[i].title %>
+            <% if ((currentUser) && (currentUser.id === user.id)) { %>
+              <a href="/delete/<%= user.projects[i]._id %>" class = "btn btn-danger pull-right">Delete</a>
+            <% } %>
         </div>
         <% if (user.projects[i].description) { %>
           <div class="panel-body"><%= user.projects[i].description %><br/>
