@@ -3,7 +3,7 @@
 <% if ((currentUser) && (currentUser.id === user.id)) { %>
   <a href="/edit" class="pull-right">Edit your profile  </a></br>
   <% if(currentUser.projects.length > 0 ) {%>
-    <a href="/cover" class="pull-right">Change Portfolio Cover</a>
+    <a href="/cover" class="pull-right">Change Profile Photo</a>
   <% } %>
 <% } %>
 <h1><%= user.name() %></h1>
