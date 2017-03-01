@@ -1,0 +1,17 @@
+<% include _header %>
+<form action="/editproject/<%=project._id %>" enctype="multipart/form-data" method="post">
+ <input name="title" type="text" class="form-control" placeholder="Title"
+ value="<%= project.title %>" required>
+ <textarea name="description" class="form-control" placeholder="Description">
+<%=project.description || "" %></textarea>
+ <input name="repository" type="link" class="form-control" placeholder="Repository"
+ value="<%= project.repository || "" %>" > 
+ <input name="image" type="file" class="form-control"
+  placeholder="Screenshot">
+  <% if(project.image) {%>
+    <h3>Project Screenshot</h3>
+    <img src="/uploads/<%= project.image %>" width = "1024" height="725"/>
+  <%}%>
+<input type="submit" value="Update Project" class="btn btn-primary ">
+</form>
+<% include _footer %>

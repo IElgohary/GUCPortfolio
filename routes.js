@@ -94,24 +94,24 @@ router.get("/edit", ensureAuthenticated, function(req, res) {
     res.render("edit", { user: req.user });
 });
 
-// router.get("/editProject/:project", ensureAuthenticated, function(req, res) {
-//     var currUser = req.user.username;
-//     var id = req.params.project;
-//     Project
-//         .findOne({ _id: id })
-//         .populate('_creator')
-//         .exec((err, project) => {
-//             if (err) {
-//                 next(err);
-//                 return;
-//             }
-//             var user = project._creator.username;
-//             if (user == currUser) {
-//                 res.render("editProject", { project: project });
-//             }
-//             return next(403);
-//         });
-// });
+router.get("/editproject/:project", ensureAuthenticated, function(req, res, next) {
+    var currUser = req.user.username;
+    var id = req.params.project;
+    Project
+        .findOne({ _id: id })
+        .populate('_creator')
+        .exec((err, project) => {
+            if (err) {
+                next(err);
+                return;
+            }
+            var user = project._creator.username;
+            if (user == currUser) {
+                res.render("editproject", { project: project });
+            }
+            return next(403);
+        });
+});
 
 router.get("/portfolio/:username", function(req, res, next) {
     var username = req.params.username;
@@ -282,6 +282,38 @@ router.post("/edit", ensureAuthenticated, function(req, res, next) {
         }
         req.flash("info", "Profile updated!");
         res.redirect("/edit");
+    });
+});
+
+
+router.post("/editproject/:project", upload.single('image'), ensureAuthenticated, function(req, res, next) {
+
+    var id = req.params.project;
+    var file = req.file;
+    Project.findById(id).exec((err, project) => {
+
+        if ((req.body.repository == "" || !validUrl.isUri(req.body.repository)) && (req.file == undefined && !project.image)) {
+            req.flash("error", "Please enter a link to the repository or a screenshot of your work.");
+            return res.redirect("/editproject/" + id);
+        }
+
+        project.title = req.body.title;
+        project.description = req.body.description;
+        project.repository = req.body.repository;
+
+        if (file != undefined) {
+            project.image = file.filename;
+        }
+
+
+        project.save((err) => {
+            if (err) {
+                next(err);
+                return;
+            }
+            req.flash("info", "Project Updated!");
+            res.redirect("/editproject/" + id);
+        });
     });
 });
 
