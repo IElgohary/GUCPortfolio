@@ -27,4 +27,13 @@
   </div>
 <% }) %>
 
+<ul class="pagination">
+<% for(var i = 0 ; i < pages; i++) {%>
+  <% if(i == page) { %>
+    <li class="active"><a ><%= i %></a></li>
+  <%}else{%>
+    <li><a href="/portfolio/<%=user.username%>/<%= i %>"><%= i %></a></li>
+  <%}%>
+<% } %>
+</ul>
 <% include _footer %>

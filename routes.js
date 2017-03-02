@@ -54,14 +54,32 @@ router.get("/", function(resa, res, next) {
     res.redirect("/page/0");
 });
 
-router.get("/search", function(req, res, next) {
-    Project.find({ description: new RegExp(req.query.q, "i") }, (err, projects) => {
-        res.render("search", {
-            projects: projects,
-            query: req.query.q
-        });
+router.get("/search/:page", function(req, res, next) {
+    var page = req.params.page;
+    Project.find({ description: new RegExp(req.query.q, "i") })
+        .limit(10)
+        .skip(10 * page)
+        .sort({ averageRating: "descending" })
+        .exec((err, projects) => {
+            Project.count()
+                .exec((err, count) => {
 
-    });
+                    if (err) { return next(err); }
+                    res.render('search', {
+                        projects: projects,
+                        page: page,
+                        pages: Math.ceil(count / 10),
+                        query: req.query.q
+                    });
+                });
+        });
+    // , (err, projects) => {
+    //         res.render("search", {
+    //             projects: projects,
+    //             query: req.query.q
+    //         });
+
+    //     });
 });
 
 router.get("/page/:page", function(req, res, next) {
