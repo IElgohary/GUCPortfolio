@@ -54,6 +54,16 @@ router.get("/", function(resa, res, next) {
     res.redirect("/page/0");
 });
 
+router.get("/search", function(req, res, next) {
+    Project.find({ description: new RegExp(req.query.q, "i") }, (err, projects) => {
+        res.render("search", {
+            projects: projects,
+            query: req.query.q
+        });
+
+    });
+});
+
 router.get("/page/:page", function(req, res, next) {
     var page = req.params.page;
     User.find().populate({ path: 'projects', options: { sort: { 'averageRating': -1 } } })

@@ -1,0 +1,30 @@
+<% include _header %>
+
+<h1><%=query%></h1>
+<% projects.forEach(function(project) { %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+          <%= project.title %> 
+    </div>
+    <div class="panel-body">
+
+        
+        <h3>Description:</h3>
+        <%= project.description %> </br>
+        
+        <% if ( project.repository) {%>
+        <h3>Repository:</h3>
+            <a href="<%= project.repository %>">
+          <%= project.repository %> <br/>
+        </a> 
+        <% } %>
+        
+        <% if (project.image) { %>
+            <img src="/uploads/<%= project.image %>" width = "1024" height="725"/>  </br>
+        <% } %> 
+        
+    </div>
+  </div>
+<% }) %>
+
+<% include _footer %>
