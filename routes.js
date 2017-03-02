@@ -73,13 +73,6 @@ router.get("/search/:page", function(req, res, next) {
                     });
                 });
         });
-    // , (err, projects) => {
-    //         res.render("search", {
-    //             projects: projects,
-    //             query: req.query.q
-    //         });
-
-    //     });
 });
 
 router.get("/page/:page", function(req, res, next) {
