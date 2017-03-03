@@ -33,7 +33,9 @@
         <% } %>
         <div>
         <% if ((currentUser) && (currentUser.id === user.id)) { %>
+              <% if(user.projects.length > 1){ %>
               <a href="/delete/<%= user.projects[i]._id %>" class = "btn btn-danger pull-right">Delete</a>
+              <% } %>
               <a href="/editproject/<%= user.projects[i]._id %>" class = "btn btn-default pull-right">Edit</a>
           <% } %>
         </div>
