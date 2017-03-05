@@ -5,7 +5,10 @@ var bcrypt = require("bcrypt-nodejs");
 
 
 var projectSchema = mongoose.Schema({
-    _creator: { type: String, ref: 'User' },
+    _creator: {
+        type: String,
+        ref: 'User'
+    },
     title: String,
     description: String,
     image: String,

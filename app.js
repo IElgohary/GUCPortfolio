@@ -14,12 +14,15 @@ var app = express();
 
 var logger = require("morgan");
 app.use(logger("dev"));
-app.use(express.static("public"));
+app.set("port", process.env.PORT || 3000);
 
-mongoose.connect("mongodb://localhost:27017/portfolio");
+var mongodbUri = 'mongodb://IElgohary:M3esyf@ds119210.mlab.com:19210/portfolio';
+
+mongoose.connect(mongodbUri);
+// mongoose.connect("mongodb://localhost:27017/portfolio");
 setUpPassport();
 
-app.set("port", process.env.PORT || 3000);
+
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
