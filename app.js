@@ -16,10 +16,10 @@ var logger = require("morgan");
 app.use(logger("dev"));
 app.set("port", process.env.PORT || 3000);
 
-var mongodbUri = 'mongodb://IElgohary:M3esyf@ds119210.mlab.com:19210/portfolio';
+// var mongodbUri = 'mongodb://IElgohary:M3esyf@ds119210.mlab.com:19210/portfolio';
 
-mongoose.connect(mongodbUri);
-// mongoose.connect("mongodb://localhost:27017/portfolio");
+// mongoose.connect(mongodbUri);
+mongoose.connect("mongodb://localhost:27017/portfolio");
 setUpPassport();
 
 
