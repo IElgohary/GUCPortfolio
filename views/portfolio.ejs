@@ -13,7 +13,7 @@
   <p><%= user.description %></p>
 <% } %>
 <% if (user.cover) { %>
-<img src="/uploads/<%= user.cover %>" width="500" height = "250" /></br></br>
+<img src="/uploads/<%= user.cover %>" class="img-responsive" width = "250" /></br></br>
 <% } %>
   <% if ( user.projects.length != 0) { %>
   <% for (var i = 0 ; i < user.projects.length ; i++){ %> 
@@ -29,7 +29,7 @@
           <%= user.projects[i].repository %></a>
         <% } %>
         <% if (user.projects[i].image) { %>
-          <img src="/uploads/<%= user.projects[i].image %>" width = "1024" height="725"/></br></br>
+          <img src="/uploads/<%= user.projects[i].image %>" class="img-responsive" width = "1024" /></br></br>
         <% } %>
         <div>
         <% if ((currentUser) && (currentUser.id === user.id)) { %>

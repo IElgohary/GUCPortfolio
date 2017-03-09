@@ -1,6 +1,6 @@
 <% include _header %>
 <% if (user.cover) { %>
-<img src="/uploads/<%= user.cover %>" />
+<img src="/uploads/<%= user.cover %>"class="img-responsive" width = "300" />
 <% } %>
 <form action="/cover" enctype="multipart/form-data" method="post">
 <input name="cover" type="file" class="form-control" placeholder="Profile Photo">
