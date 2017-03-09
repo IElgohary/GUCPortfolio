@@ -1,3 +1,6 @@
+# Deployed
+http://52.37.220.65:3000/
+
 # GUCPortfolio
 
 My submission for the "Software Engineering Course" mini project.
